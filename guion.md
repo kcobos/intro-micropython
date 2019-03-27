@@ -17,3 +17,5 @@ Lectura de un pulsador
 Lectura de sensor de temperatura
 Lectura de LDR
 PWM
+
+Plataformas: fiware, thingspeak, openhab, home assistant
