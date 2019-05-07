@@ -133,7 +133,7 @@ En main.py irá la programación del µ. <!-- .element: class="fragment" data-fr
 ### ¡Ojo con el while True! <!-- .element: class="fragment" data-fragment-index="3" -->
 
 
-## Jugando coh el sistema de archivos
+## Jugando con el sistema de archivos
 ```python
 f = open('archivo.txt', 'w')
 f.write("hola!! estoy en un archivo") # Devuelve la longitud
@@ -164,6 +164,12 @@ os.listdir()
 import os
 os.mkdir('carpeta')
 ```
+### Y eliminarlas <!-- .element: class="fragment" data-fragment-index="1" -->
+```python
+import os
+os.rmdir('carpeta')
+```
+<!-- .element: class="fragment" data-fragment-index="1" -->
 
 
 ## ¿Eliminar archivos?
@@ -174,3 +180,9 @@ os.remove('archivo.txt')
 
 
 # Pequeño ""OS""
+```python
+import os
+os.uname()
+```
+<!-- .element: class="fragment" data-fragment-index="1" -->
+¿µPython os ha sorprendido? <!-- .element: class="fragment" data-fragment-index="2" -->
