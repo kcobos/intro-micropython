@@ -15,7 +15,7 @@ Una implementación de Python3 para microcontroladores <!-- .element: class="fra
 
 ## ¿Por qué µPython?
  * Interpretado. Menos velocidad pero portable. 
- * Interactivo. Tenemos consola!! 
+ * Interactivo. ¡¡Tenemos consola!! 
  * Tenemos muchos [módulos](https://docs.micropython.org/en/latest/library/index.html#python-standard-libraries-and-micro-libraries) a nuestra disposición. 
  * Extensible. Podemos crear los módulos que necesitemos. CPython. 
 ### Más alto nivel. <!-- .element: class="fragment" data-fragment-index="5" -->
@@ -41,6 +41,7 @@ Una implementación de Python3 para microcontroladores <!-- .element: class="fra
 
 ### Instalar esptool
 <!-- .slide: data-background="img/installing_esptool.png" data-background-position="top" data-background-opacity="0.1" -->
+`pip3 install esptool`
 
 
 ### Flashear el µcontrolador
@@ -54,7 +55,7 @@ Una implementación de Python3 para microcontroladores <!-- .element: class="fra
 
 ## Algo nuevo se huele en el ambiente
 <!-- .slide: data-background="img/new_wifi.jpg" data-background-position="top" data-background-opacity="0.2" -->
-### Y listo para su uso y disfrute!!
+### ¡¡Y listo para su uso y disfrute!!
 
 
 
@@ -111,3 +112,65 @@ led.on()  # led.value(1)
 
 # ¿Dudas hasta ahora?
 <!-- .slide: data-background="img/questions.jpg" data-background-opacity="0.5" -->
+
+
+
+## ¿Y ese `boot.py`?
+µPython es más que un intérprete.
+
+### Tiene un sistema de archivos interno. <!-- .element: class="fragment" data-fragment-index="1" -->
+Tipo EEPROM (Arduino) pero mejor. <!-- .element: class="fragment" data-fragment-index="2" -->
+
+
+## Dos archivos especiales
+ * `boot.py`: se ejecuta primero, si existe.
+ * `main.py`: se ejecuta.
+
+En boot.py se suele configurar el µcontrolador: WiFi, pines... <!-- .element: class="fragment" data-fragment-index="1" -->
+
+En main.py irá la programación del µ. <!-- .element: class="fragment" data-fragment-index="2" -->
+
+### ¡Ojo con el while True! <!-- .element: class="fragment" data-fragment-index="3" -->
+
+
+## Jugando coh el sistema de archivos
+```python
+f = open('archivo.txt', 'w')
+f.write("hola!! estoy en un archivo") # Devuelve la longitud
+f.close()
+```
+
+```python
+f = open('archivo.txt')
+f.read()
+f.close()
+``` 
+<!-- .element: class="fragment" data-fragment-index="1" -->
+
+
+# ¡Eso se puede hacer con EEPROM!
+## No es nuevo
+
+
+## ¿Listar archivos?
+```python
+import os
+os.listdir()
+```
+
+
+## ¿Crear carpetas en un µcontrolador?
+```python
+import os
+os.mkdir('carpeta')
+```
+
+
+## ¿Eliminar archivos?
+```python
+import os
+os.remove('archivo.txt')
+```
+
+
+# Pequeño ""OS""
