@@ -454,4 +454,22 @@ pwm1 = PWM(Pin(2), freq=500, duty=512)
 
 
 
-# ¿Cacharreamos?
+## ¿Cacharreamos?
+
+
+## Placa de desarrollo
+ESP8266 NodeMCU WiFi Devkit
+
+[Datasheet](https://www.handsontec.com/pdf_learn/esp8266-V10.pdf)
+
+
+<!-- .slide: data-background="img/devkit.png" data-background-opacity="1" data-background-size="contain" -->
+
+
+## ¿Qué podemos hacer?
+ * Controlar una el encendido y apagado de luz, electrodoméstico o calefacción desde nuestro móvil.
+ * Controlar una el encendido y apagado de luz, electrodoméstico o calefacción por tiempo.
+ * Controlar una el encendido y apagado de luz por luminosidad.
+ * Controlar una el encendido y apagado de calefacción por temperatura.
+ * Abrir una puerta con tarjeta RFID.
+ * Telémetro con ultrasonidos.
