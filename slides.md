@@ -30,7 +30,7 @@ Una implementación de Python3 para microcontroladores <!-- .element: class="fra
 
 ### ¿Qué necesitamos?
  1. µcontrolador compatible: Pyboard, WiPy, ESP8266, ESP32...
- 2. Ordenador con python (solo al principio)
+ 2. Ordenador con Python3 (solo al principio)
  3. Firmware (intérprete de µPython)
  4. 5 minutos
 
@@ -172,11 +172,17 @@ os.rmdir('carpeta')
 <!-- .element: class="fragment" data-fragment-index="1" -->
 
 
-## ¿Eliminar archivos?
+## ¿Renombrar ficheros?
+```python
+import os
+os.rename('archivo.txt', 'archivo_antiguo.txt')
+```
+## ¿Eliminar archivos? <!-- .element: class="fragment" data-fragment-index="1" -->
 ```python
 import os
 os.remove('archivo.txt')
 ```
+<!-- .element: class="fragment" data-fragment-index="1" -->
 
 
 # Pequeño ""OS""
@@ -186,3 +192,266 @@ os.uname()
 ```
 <!-- .element: class="fragment" data-fragment-index="1" -->
 ¿µPython os ha sorprendido? <!-- .element: class="fragment" data-fragment-index="2" -->
+
+
+
+## Módulos disponibles
+<!-- .slide: data-background="img/modules.png" data-background-opacity="0.5" data-background-size="contain"  -->
+```python
+help('modules')
+```
+
+
+## Módulos estándar
+ * array
+ * math
+ * collections / ucollections
+ * hashlib / uhashlib
+ * json / ujson
+ * random / urandom
+ * time
+ * re / ure
+ * zlib / uzlib
+ * ucryptolib
+ * uheapq
+
+
+## Módulos específicos
+ * btree
+ * esp
+ * gc
+ * io / uio
+ * machine: I2C, IRQ, Pin, PWM, RTC, SPI, UART...
+ * micropython
+ * network: http_client(_ssl), http_server(_ssl)
+ * ntptime
+ * os / uos
+ * sys
+ * upip
+
+
+## Módulos complementarios
+ * dht
+ * ds18x20
+ * lwip
+ * neopixel
+ * ssd1306
+ * onewire
+ * umqtt(simple/robust)
+
+
+ ## Hebras y tareas
+  * _thread
+  * uasyncio
+
+
+
+# ¿IoT?
+<!-- .slide: data-background="https://upload.wikimedia.org/wikipedia/commons/4/44/WIFI_icon.svg" data-background-opacity="0.5" data-background-size="contain"  -->
+## WiFi
+
+
+## Configuración básica
+```python
+import network
+
+wlan = network.WLAN(network.STA_IF)
+wlan.active(True)
+wlan.isconnected()
+wlan.connect('essid', 'password')
+wlan.ifconfig()
+
+ap = network.WLAN(network.AP_IF)
+ap.active(True)
+ap.config(essid='ESP-AP', password='miESPap123')
+ap.ifconfig(('192.168.4.1', '255.255.255.0', '192.168.4.1', '8.8.8.8'))
+```
+[Docu](https://docs.micropython.org/en/latest/library/network.WLAN.html)
+
+
+## Peticiones
+```python
+import urequests
+respuesta = urequests.get('https://httpbin.org/get')
+print(respuesta.text)
+```
+```python
+print(respuesta.json())
+```
+<!-- .element: class="fragment" data-fragment-index="1" -->
+```python
+print(respuesta.status_code)
+print(respuesta.reason)
+```
+<!-- .element: class="fragment" data-fragment-index="2" -->
+```python
+urequests.post('https://httpbin.org/post', data="micropython")
+urequests.delete('https://httpbin.org/delete', data="compilar para probar")
+urequests.put('https://httpbin.org/put', data="IoT fácil")
+```
+<!-- .element: class="fragment" data-fragment-index="3" -->
+
+
+## Servidor
+```python
+import socket
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind(('', 80))
+s.listen(0)
+while True:
+   conn, addr = s.accept()
+   print("Conexión desde: %s" % str(addr))
+   request = conn.recv(512)
+   print("Contenido recivido: %s" % str(request))
+   conn.send("<html><head><title>Servidor ESP8266</title></head><body><h1>Hola desde mi IoT</h1></body></html>")
+   conn.close()
+```
+
+
+## Servidor II
+```python
+import machine
+led = machine.Pin(2, machine.Pin.OUT)
+import socket
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind(('', 80))
+s.listen(0)
+while True:
+   conn, addr = s.accept()
+   print("Conexión desde: %s" % str(addr))
+   request = conn.recv(512)
+   request = str(request).split(" ")
+   if request[1] == "/?LED=ON":
+      led.on()
+   if request[1] == "/?LED=OFF":
+      led.off()
+   print("Contenido recivido: %s" % str(request))
+   conn.send("<html><head><title>Servidor ESP8266</title></head><body><h1>Hola desde mi IoT</h1><h2>%s</h2></body></html>"%led.value())
+   conn.close()
+```
+
+
+
+# MQTT <!-- .element: style="margin-top: -2.5em" -->
+<!-- .slide: data-background="img/mqtt-diagram.png" data-background-opacity="0.5" data-background-size="contain"  -->
+[Cliente](https://mqttfx.jensd.de/index.php/download) 
+
+
+## Librerías incluidas
+ * umqtt.simple
+ * umqtt.robust
+
+
+## Suscripción
+```python
+from umqtt.simple import MQTTClient
+
+def sub_cb(topic, msg):
+    print((topic, msg))
+
+c = MQTTClient("ESP8266", "cubie.kcobos.es") # user="usuario", password="secreto"
+c.set_callback(sub_cb)
+c.connect()
+print("Conectando")
+c.subscribe(b"prueba")
+print("Suscrito a prueba")
+
+while True:
+    c.wait_msg()
+
+c.disconnect()
+```
+
+
+## Publicación
+```python
+import time
+from umqtt.simple import MQTTClient
+
+c = MQTTClient("ESP8266", "cubie.kcobos.es")
+if not c.connect():
+    print("Conectando")
+
+i=0
+while True:
+    c.publish("prueba", "contando "+str(i))
+    time.sleep(1)
+    i+=1
+
+c.disconnect()
+```
+
+
+
+# ¿Hacemos cosas con el µ?
+<!-- .slide: data-background="img/toi.jpg" data-background-opacity="0.5" -->
+
+
+## Salida digital
+```python
+import machine
+led = machine.Pin(2, machine.Pin.OUT)
+led.value()
+led.off() # led.value(0)
+led.on()  # led.value(1)
+```
+
+
+## Lectura digital
+```python
+import machine
+boton = machine.Pin(4, machine.Pin.IN)
+boton.value()
+```
+```python
+def boton_irq(p):
+    print("El botón ha sido pulsado")
+boton.irq(trigger=machine.Pin.IRQ_RISING, handler=boton_irq)
+#boton.irq(trigger=machine.Pin.IRQ_FALLING, handler=boton_irq)
+```
+<!-- .element: class="fragment" data-fragment-index="1" -->
+
+
+## Lectura sensor
+DHT11
+```python
+import machine
+import dht
+d = dht.DHT11(machine.Pin(5))
+d.measure()
+d.temperature()
+d.humidity()
+```
+
+
+## Lectura analógica
+```python
+import machine
+lum = machine.ADC(0)
+lum.read()
+```
+
+
+## PWM (Pulse Width Modulation)
+<!-- .slide: data-background="https://developer.android.com/things/images/pwm-duty.png" data-background-opacity="0.5" data-background-size="contain" -->
+```python
+from machine import Pin, PWM
+pwm0 = PWM(Pin(2))
+pwm0.freq() # 0 - 1000
+pwm0.freq(1000)
+pwm0.duty() # 0 - 1023
+pwm0.duty(200)
+pwm0.deinit()
+```
+<!-- .element: class="fragment" data-fragment-index="1" -->
+```python
+pwm1 = PWM(Pin(2), freq=500, duty=512)
+```
+<!-- .element: class="fragment" data-fragment-index="2" -->
+
+
+## Y un largo etcétera
+
+
+
+# ¿Cacharreamos?

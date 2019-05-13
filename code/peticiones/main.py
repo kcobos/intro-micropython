@@ -1,0 +1,12 @@
+import urequests
+respuesta = urequests.get('https://httpbin.org/get')
+print(respuesta.text)
+print(respuesta.json())
+print(respuesta.status_code)
+print(respuesta.reason)
+respuesta = urequests.post('https://httpbin.org/post', data="micropython")
+print(respuesta.text)
+respuesta = urequests.delete('https://httpbin.org/delete', data="compilar para probar")
+print(respuesta.text)
+respuesta = urequests.put('https://httpbin.org/put', data="IoT fácil")
+print(respuesta.text)
