@@ -17,7 +17,7 @@ Una implementación de Python3 para microcontroladores <!-- .element: class="fra
  * Interpretado. Menos velocidad pero portable. 
  * Interactivo. ¡¡Tenemos consola!! 
  * Tenemos muchos [módulos](https://docs.micropython.org/en/latest/library/index.html#python-standard-libraries-and-micro-libraries) a nuestra disposición. 
- * Extensible. Podemos crear los módulos que necesitemos. CPython. 
+ * Extensible. Podemos crear los módulos que necesitemos. Python a alto nivel y CPython a bajo nivel. 
 ### Más alto nivel. <!-- .element: class="fragment" data-fragment-index="5" -->
 
 
@@ -164,7 +164,7 @@ os.listdir()
 import os
 os.mkdir('carpeta')
 ```
-### Y eliminarlas <!-- .element: class="fragment" data-fragment-index="1" -->
+## ¿Y eliminarlas? <!-- .element: class="fragment" data-fragment-index="1" -->
 ```python
 import os
 os.rmdir('carpeta')
@@ -185,7 +185,7 @@ os.remove('archivo.txt')
 <!-- .element: class="fragment" data-fragment-index="1" -->
 
 
-# Pequeño ""OS""
+# Pequeño "OS"
 ```python
 import os
 os.uname()
@@ -260,6 +260,7 @@ wlan.active(True)
 wlan.isconnected()
 wlan.connect('essid', 'password')
 wlan.ifconfig()
+wlan.ifconfig(('192.168.1.44', '255.255.255.0', '192.168.1.1', '8.8.8.8'))
 
 ap = network.WLAN(network.AP_IF)
 ap.active(True)
